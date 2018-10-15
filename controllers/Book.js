@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { forEach } = require('lodash');
+const { isAuthenticated } = require('../middleware/Authentication');
 
 const Book = require('../models/BookSchema');
 
@@ -55,7 +56,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', isAuthenticated, (req, res) => {
   const newBook = new Book();
 
   forEach(req.body, (value, index) => {
@@ -80,7 +81,7 @@ router.post('/', (req, res) => {
   });
 });
 
-router.post('/update', (req, res) => {
+router.post('/update', isAuthenticated, (req, res) => {
   const {
     id, name, author, publisher, page, isbn,
   } = req.body;
@@ -108,10 +109,10 @@ router.post('/update', (req, res) => {
     });
 });
 
-router.post('/delete', (req, res) => {
+router.post('/delete', isAuthenticated, (req, res) => {
   const { id } = req.body;
 
-  Book.findOneAndDelete(id, (err) => {
+  Book.findByIdAndDelete(id, (err) => {
     if (err) {
       res.status(200).send({
         status: 404,

@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const config = require('./config/config');
 
 // MongoDB with Mongoose
+mongoose.set('useFindAndModify', false);
 mongoose.Promise = global.Promise;
 mongoose.connect(config.db.mongoUri, { useNewUrlParser: true }, (err) => {
   if (err) {
@@ -23,11 +24,11 @@ app.use(json());
 app.use(cors());
 
 // Load Controller files
-// const auth = require('./controllers/Auth');
+const auth = require('./controllers/Auth');
 // const user = require('./controllers/User');
 const book = require('./controllers/Book');
 
-// app.use('/api/v1/auth', auth);
+app.use('/api/v1/auth', auth);
 // app.use('/api/v1/user', user);
 app.use('/api/v1/book', book);
 
