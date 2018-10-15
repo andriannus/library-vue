@@ -1,6 +1,10 @@
 <template>
   <v-container fluid>
-    <v-btn color="success" to="/book">Book</v-btn>
+    <v-card>
+      <v-card-text>
+        <h1 class="display-1 text-xs-center">Welcome to Library App</h1>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 

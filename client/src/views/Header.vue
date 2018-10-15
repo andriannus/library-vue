@@ -24,9 +24,11 @@ import Navigation from '@/components/Navigation.vue';
   metaInfo: {
     titleTemplate: '%s - Library App Vue',
   },
+
   components: {
     Navigation,
   },
 })
+
 export default class Header extends Vue {}
 </script>

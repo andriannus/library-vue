@@ -11,7 +11,7 @@ Vue.use(Vuetify);
 Vue.use(VueAxios, axios);
 Vue.use(Meta);
 
-axios.defaults.baseURL = 'http://localhost:3030/';
+axios.defaults.baseURL = 'http://localhost:8081/api/v1/';
 Vue.config.productionTip = false;
 
 new Vue({
