@@ -11,6 +11,11 @@ Vue.use(Vuetify);
 Vue.use(VueAxios, axios);
 Vue.use(Meta);
 
+const token = localStorage.getItem('t-t');
+if (token) {
+  axios.defaults.headers.common['t-t'] = token;
+}
+
 axios.defaults.baseURL = 'http://localhost:8081/api/v1/';
 Vue.config.productionTip = false;
 

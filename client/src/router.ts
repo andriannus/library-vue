@@ -10,6 +10,15 @@ import Book from './views/Book.vue';
 
 Vue.use(Router);
 
+const ifNotAuthenticated = (to: any, from: any, next: any) => {
+  if (!store.getters.isAuthenticated) {
+    next();
+    return;
+  }
+
+  next('/');
+};
+
 const ifAuhenticated = (to: any, from: any, next: any) => {
   if (store.getters.isAuthenticated) {
     next();
@@ -17,7 +26,7 @@ const ifAuhenticated = (to: any, from: any, next: any) => {
   }
 
   next('/login');
-}
+};
 
 export default new Router({
   mode: 'history',
@@ -27,6 +36,7 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: Register,
+      beforeEnter: ifNotAuthenticated,
       meta: {
         title: 'Register',
       },
@@ -35,6 +45,7 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: Login,
+      beforeEnter: ifNotAuthenticated,
       meta: {
         title: 'Login',
       },
@@ -62,6 +73,7 @@ export default new Router({
           path: '',
           name: 'list-books',
           component: Book,
+          beforeEnter: ifAuhenticated,
           meta: {
             title: 'List of Books',
           },

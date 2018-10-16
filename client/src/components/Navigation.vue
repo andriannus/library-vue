@@ -13,11 +13,13 @@
       width="250"
     >
       <v-toolbar flat>
-        <v-list-tile>
-          <v-list-tile-title class="title">
-            Library
-          </v-list-tile-title>
-        </v-list-tile>
+        <v-list>
+          <v-list-tile>
+            <v-list-tile-title class="title">
+              Library
+            </v-list-tile-title>
+          </v-list-tile>
+        </v-list>
       </v-toolbar>
 
       <v-divider></v-divider>
@@ -40,13 +42,22 @@
             Books
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile to="/logout" @click="logOut()">
+          <v-list-tile-action>
+            <v-icon>mdi-logout-variant</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            Logout
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue } from 'vue-property-decorator';
+import { Component,  Vue } from 'vue-property-decorator';
 
 @Component
 export default class Navigation extends Vue {
@@ -58,9 +69,16 @@ export default class Navigation extends Vue {
     this.$root.$watch('setTitle', this.setTitle);
   }
 
-  @Emit()
   public setTitle() {
     this.title = this.$route.meta.title;
+  }
+
+  private logOut() {
+    // Vuex Action
+    this.$store.dispatch('AUTH_LOGOUT')
+      .then(() => {
+        this.$router.push('/login');
+      });
   }
 }
 </script>

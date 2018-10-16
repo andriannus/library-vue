@@ -45,7 +45,7 @@
               <v-spacer></v-spacer>
 
               <v-btn flat color="info" type="submit">Submit</v-btn>
-              <v-btn flat>Cancel</v-btn>
+              <v-btn flat @click="reset()">Cancel</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>
@@ -76,6 +76,10 @@ export default class Register extends Vue {
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  private reset() {
+    this.user = {};
   }
 }
 </script>
