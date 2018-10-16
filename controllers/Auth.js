@@ -58,6 +58,7 @@ router.post('/login', (req, res) => {
                   status: 200,
                   success: true,
                   message: 'Login successful',
+                  user,
                   token,
                 });
               },
