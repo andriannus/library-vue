@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import VueAxios from 'vue-axios';
+import VeeValidate from 'vee-validate';
 import axios from 'axios';
 import Meta from 'vue-meta';
 import App from './App.vue';
@@ -9,6 +10,7 @@ import store from './store';
 
 Vue.use(Vuetify);
 Vue.use(VueAxios, axios);
+Vue.use(VeeValidate);
 Vue.use(Meta);
 
 const token = localStorage.getItem('t-t');
