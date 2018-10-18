@@ -83,10 +83,10 @@ router.post('/', isAuthenticated, (req, res) => {
 
 router.post('/update', isAuthenticated, (req, res) => {
   const {
-    id, name, author, publisher, page, isbn,
+    _id, name, author, publisher, page, isbn,
   } = req.body;
 
-  Book.findByIdAndUpdate(id,
+  Book.findByIdAndUpdate(_id,
     {
       name, author, publisher, page, isbn,
     },

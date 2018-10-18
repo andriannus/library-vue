@@ -44,22 +44,32 @@ export default new Vuex.Store({
         commit('AUTH_REQUEST');
         axios.post('auth/login', userData)
           .then((res) => {
-            if (res.data.status == 404) {
-              let message = 'User not found';
-              reject(message);
+            let err;
+
+            if (res.data.status === 404) {
+              err = {
+                code: 404,
+                message: 'User not found',
+              },
+              reject(err);
             }
 
-            if (res.data.status == 401) {
-              let message = 'Password does not match';
-              reject(message);
+            if (res.data.status === 401) {
+              err = {
+                code: 401,
+                message: 'Password does not match',
+              },
+              reject(err);
             }
 
-            if (res.data.status == 200) {
+            if (res.data.status === 200) {
               const token = res.data.token;
               const user = JSON.stringify(res.data.user);
 
               localStorage.setItem('t-t', token);
               localStorage.setItem('u-d', user);
+
+              axios.defaults.headers.common['t-t'] = token;
 
               commit('AUTH_SUCCESS', token);
               commit('USER_DATA', user);
