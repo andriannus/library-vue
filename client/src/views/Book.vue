@@ -25,7 +25,7 @@
           <v-btn icon class="ma-0" @click="editBook(props.item)">
             <v-icon>mdi-circle-edit-outline</v-icon>
           </v-btn>
-          <v-btn icon class="ma-0" @click="deleteProcess(props.item._id)">
+          <v-btn icon class="ma-0" @click="deleteConfirm(props.item._id)">
             <v-icon>mdi-delete-circle</v-icon>
           </v-btn>
         </td>
@@ -48,37 +48,47 @@
           <v-layout wrap>
             <v-flex xs12>
               <v-text-field
-                outline
                 label="Book Name"
                 v-model="book.name"
+                v-validate="'required'"
+                data-vv-name="name"
+                :error-messages="errors.collect('name')"
               ></v-text-field>
             </v-flex>
             <v-flex xs12>
               <v-text-field
-                outline
                 label="Author"
                 v-model="book.author"
+                v-validate="'required'"
+                data-vv-name="author"
+                :error-messages="errors.collect('author')"
               ></v-text-field>
             </v-flex>
             <v-flex xs12>
               <v-text-field
-                outline
                 label="Publisher"
                 v-model="book.publisher"
+                v-validate="'required'"
+                data-vv-name="publisher"
+                :error-messages="errors.collect('publisher')"
               ></v-text-field>
             </v-flex>
             <v-flex xs12>
               <v-text-field
-                outline
                 label="Total Pages"
                 v-model.number="book.page"
+                v-validate="'required|numeric'"
+                data-vv-name="page"
+                :error-messages="errors.collect('page')"
               ></v-text-field>
             </v-flex>
             <v-flex xs12>
               <v-text-field
-                outline
                 label="ISBN"
                 v-model="book.isbn"
+                v-validate="'required'"
+                data-vv-name="isbn"
+                :error-messages="errors.collect('isbn')"
               ></v-text-field>
             </v-flex>
           </v-layout>
@@ -91,12 +101,44 @@
           <v-btn
             flat
             color="info"
-            @click="saveProcess()"
+            @click="validateForm()"
           >{{ modalBtnSave }}</v-btn>
           <v-btn
             flat
-            @click="reset()"
+            @click="reset('noDelete')"
           >Cancel</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      persistent
+      transition="slide-y-reverse-transition"
+      v-model="dialogConfirm"
+      max-width="300px"
+    >
+      <v-card>
+        <v-card-title title>
+          <h3>Delete Confirm</h3>
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text>
+          Do You want to delte this book?
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            flat
+            color="info"
+            @click="deleteProcess()"
+          >Yes</v-btn>
+          <v-btn
+            flat
+            @click="reset('delete')"
+          >No</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -119,6 +161,10 @@ import moment from 'moment';
     title: 'List of Books',
   },
 
+  $_veeValidate: {
+    validator: 'new',
+  },
+
   filters: {
     moment: (date: any) => moment(date).format('LL'),
   },
@@ -128,6 +174,7 @@ export default class Book extends Vue {
   private bookId = '';
   private isEdit = false;
   private dialog = false;
+  private dialogConfirm = false;
   private book = {};
   private items = [];
   private headers = [
@@ -161,6 +208,26 @@ export default class Book extends Vue {
       align: 'center',
     },
   ];
+  private dictionary = {
+    custom: {
+      name: {
+        required: 'Book name can not be empty',
+      },
+      author: {
+        required: 'Author can not be empty',
+      },
+      publisher: {
+        required: 'Publisher can not be empty',
+      },
+      page: {
+        required: 'Total page can not be empty',
+        numeric: 'Only numeric characters',
+      },
+      isbn: {
+        required: 'ISBN can not be empty',
+      },
+    },
+  };
 
   private get modalTitle() {
     return this.isEdit ? 'Edit Book' : 'Add New Book';
@@ -172,6 +239,7 @@ export default class Book extends Vue {
 
   private mounted() {
     this.fetchData();
+    this.$validator.localize('en', this.dictionary);
   }
 
   private fetchData() {
@@ -185,6 +253,17 @@ export default class Book extends Vue {
       });
   }
 
+  private validateForm() {
+    this.$validator.validateAll()
+      .then((result) => {
+        if (!result) {
+          return;
+        }
+
+        this.saveProcess();
+      });
+  }
+
   private saveProcess() {
     const book = this.book;
 
@@ -192,19 +271,17 @@ export default class Book extends Vue {
       this.axios.post('book', book)
         .then((res) => {
           console.log(res.data);
-          this.reset();
+          this.reset('noDelete');
           this.fetchData();
         })
         .catch((err) => {
           console.log(err);
         });
     } else {
-      Object.assign({ _id: this.bookId }, book);
-
       this.axios.post('book/update', book)
         .then((res) => {
           console.log(res.data);
-          this.reset();
+          this.reset('noDelete');
           this.fetchData();
         })
         .catch((err) => {
@@ -213,18 +290,22 @@ export default class Book extends Vue {
     }
   }
 
-  private deleteProcess(id: string) {
-    if (confirm('Really')) {
-      this.axios.post('book/delete', { id })
-        .then((res) => {
-          this.fetchData();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      return false;
-    }
+  private deleteProcess() {
+    const id = this.bookId;
+
+    this.axios.post('book/delete', { id })
+      .then((res) => {
+        this.fetchData();
+        this.reset('delete');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  private deleteConfirm(id: string) {
+    this.dialogConfirm = true;
+    this.bookId = id;
   }
 
   private editBook(item: any) {
@@ -234,14 +315,20 @@ export default class Book extends Vue {
     this.book = item;
   }
 
-  private reset() {
-    this.dialog = false;
-    this.bookId = '';
-    this.book = {};
+  private reset(status: string) {
+    if (status === 'noDelete') {
+      this.dialog = false;
+      this.bookId = '';
+      this.book = {};
 
-    setTimeout(() => {
-      this.isEdit = false;
-    }, 500);
+      setTimeout(() => {
+        this.isEdit = false;
+        this.$validator.reset();
+      }, 500);
+    } else {
+      this.dialogConfirm = false;
+      this.bookId = '';
+    }
   }
 }
 </script>

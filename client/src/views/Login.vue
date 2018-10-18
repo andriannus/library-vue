@@ -2,7 +2,7 @@
   <v-container fluid fill-height>
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
-        <v-form @submit.prevent="loginProcess()">
+        <v-form @submit.prevent="validateForm()">
           <v-card>
             <v-card-title>
               <h3 class="title">Login</h3>
@@ -15,6 +15,9 @@
                   <v-text-field
                     label="E-mail"
                     v-model="user.email"
+                    v-validate="'required|email'"
+                    data-vv-name="email"
+                    :error-messages="errors.collect('email')"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12>
@@ -22,6 +25,9 @@
                     label="Password"
                     type="password"
                     v-model.number="user.password"
+                    v-validate="'required'"
+                    data-vv-name="password"
+                    :error-messages="errors.collect('password')"
                   ></v-text-field>
                 </v-flex>
               </v-layout>
@@ -39,6 +45,15 @@
         </v-form>
       </v-flex>
     </v-layout>
+
+    <v-snackbar
+      bottom
+      right
+      :timeout="2000"
+      v-model="snackbar"
+    >
+      {{ snackbarText }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -49,10 +64,45 @@ import { Component, Vue } from 'vue-property-decorator';
   metaInfo: {
     title: 'Login',
   },
+
+  $_veeValidate: {
+    validator: 'new',
+  },
 })
 
 export default class Login extends Vue {
-  private user = {};
+  private snackbarText = '';
+  private snackbar = false;
+  private user = {
+    email: '',
+    password: '',
+  };
+  private dictionary = {
+    custom: {
+      email: {
+        required: 'E-mail can not be empty',
+        email: 'Must be a valid e-mail',
+      },
+      password: {
+        required: 'Password can not be empty',
+      },
+    },
+  };
+
+  private mounted() {
+    this.$validator.localize('en', this.dictionary);
+  }
+
+  private validateForm() {
+    this.$validator.validateAll()
+      .then((result) => {
+        if (!result) {
+          return;
+        }
+
+        this.loginProcess();
+      });
+  }
 
   private loginProcess() {
     const user = this.user;
@@ -62,12 +112,25 @@ export default class Login extends Vue {
         this.$router.push('/');
       })
       .catch((err) => {
-        console.log(err);
+        this.snackbarText = err.message;
+        this.snackbar = true;
+
+        if (err.code === 404) {
+          this.reset();
+        }
+
+        if (err.code === 401) {
+          this.user.password = '';
+        }
+
+        this.$validator.reset();
       });
   }
 
   private reset() {
-    this.user = {};
+    this.user.email = '';
+    this.user.password = '';
+    this.$validator.reset();
   }
 }
 </script>
