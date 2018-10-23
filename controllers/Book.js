@@ -1,5 +1,5 @@
-const { Router } = require('express');
 const { forEach } = require('lodash');
+const { Router } = require('express');
 const { isAuthenticated } = require('../middleware/Authentication');
 
 const Book = require('../models/BookSchema');
@@ -7,7 +7,15 @@ const Book = require('../models/BookSchema');
 const router = Router();
 
 router.get('/', (req, res) => {
-  Book.find()
+  const { search } = req.query || '';
+  const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+  const perPage = 5;
+  const page = req.query.page || 1;
+
+  Book
+    .find({ name: { $regex: search, $options: 'i' } })
+    .skip((perPage * page) - perPage)
+    .limit(perPage)
     .exec((err, books) => {
       if (err) {
         res.status(200).send({
@@ -16,12 +24,36 @@ router.get('/', (req, res) => {
           message: err,
         });
       } else {
-        res.status(200).send({
-          status: 200,
-          success: true,
-          message: 'Get a list of books',
-          data: books,
-        });
+        Book.countDocuments()
+          .exec((fault, count) => {
+            if (fault) {
+              //
+            } else {
+              const total = Math.round(count / perPage);
+
+              res.status(200).send({
+                status: 200,
+                success: true,
+                message: 'Get a list of books',
+                data: books,
+                links: {
+                  first: `${fullUrl}?page=1`,
+                  last: total > page ? `${fullUrl}?page=${total}` : `${fullUrl}?page=1`,
+                  prev: page - 1 !== 0 ? `${fullUrl}?page=${page - 1}` : null,
+                  next: total > page ? `${fullUrl}?page=${page + 1}` : null,
+                },
+                meta: {
+                  currentPage: page,
+                  from: 1,
+                  lastPage: total > page ? total : 1,
+                  path: fullUrl,
+                  perPage,
+                  to: count,
+                  total: count,
+                },
+              });
+            }
+          });
       }
     });
 });
