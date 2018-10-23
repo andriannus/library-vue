@@ -21,12 +21,15 @@
         <td>{{ props.item.page }}</td>
         <td>{{ props.item.isbn }}</td>
         <td>{{ props.item.date | moment }}</td>
-        <td>
+        <td class="text-xs-center">
+          <v-btn icon class="ma-0" @click="viewBook(props.item._id)">
+            <v-icon>mdi-eye</v-icon>
+          </v-btn>
           <v-btn icon class="ma-0" @click="editBook(props.item)">
             <v-icon>mdi-circle-edit-outline</v-icon>
           </v-btn>
           <v-btn icon class="ma-0" @click="deleteConfirm(props.item._id)">
-            <v-icon>mdi-delete-circle</v-icon>
+            <v-icon color="error">mdi-delete-circle</v-icon>
           </v-btn>
         </td>
       </template>
@@ -124,7 +127,7 @@
         <v-divider></v-divider>
 
         <v-card-text>
-          Do You want to delte this book?
+          Do You want to delete this book?
         </v-card-text>
 
         <v-card-actions>
@@ -242,6 +245,10 @@ export default class Book extends Vue {
     this.$validator.localize('en', this.dictionary);
   }
 
+  private viewBook(id: string) {
+    alert(id);
+  }
+
   private fetchData() {
     this.axios.get('book')
       .then((res) => {
@@ -312,7 +319,7 @@ export default class Book extends Vue {
     this.isEdit = true;
     this.dialog = true;
     this.bookId = item._id;
-    this.book = item;
+    this.book = Object.assign({}, item);
   }
 
   private reset(status: string) {

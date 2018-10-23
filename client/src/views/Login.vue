@@ -34,12 +34,17 @@
             </v-card-text>
 
             <v-divider></v-divider>
-            <v-card-actions>
+            <v-card-actions v-show="!isLoading">
               <v-btn flat to="/register">Register</v-btn>
               <v-spacer></v-spacer>
 
               <v-btn flat color="info" type="submit">Submit</v-btn>
               <v-btn flat @click="reset()">Cancel</v-btn>
+            </v-card-actions>
+
+            <v-card-actions v-show="isLoading">
+              <v-spacer></v-spacer>
+              <v-btn flat disabled>Please Wait...</v-btn>
             </v-card-actions>
           </v-card>
         </v-form>
@@ -72,6 +77,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 export default class Login extends Vue {
   private snackbarText = '';
+  private isLoading = false;
   private snackbar = false;
   private user = {
     email: '',
@@ -105,13 +111,16 @@ export default class Login extends Vue {
   }
 
   private loginProcess() {
+    this.isLoading = true;
     const user = this.user;
 
     this.$store.dispatch('AUTH_REQUEST', user)
       .then(() => {
+        this.isLoading = false;
         this.$router.push('/');
       })
       .catch((err) => {
+        this.isLoading = false;
         this.snackbarText = err.message;
         this.snackbar = true;
 

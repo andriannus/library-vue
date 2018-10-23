@@ -15,7 +15,7 @@
                   <v-text-field
                     label="Name"
                     v-model="user.name"
-                    v-validate="'required'"
+                    v-validate="'required|alpha'"
                     data-vv-name="name"
                     :error-messages="errors.collect('name')"
                   ></v-text-field>
@@ -52,22 +52,37 @@
             </v-card-text>
 
             <v-divider></v-divider>
-            <v-card-actions>
+            <v-card-actions v-show="!isLoading">
               <v-btn flat to="/login">Login</v-btn>
               <v-spacer></v-spacer>
 
               <v-btn flat color="info" type="submit">Submit</v-btn>
               <v-btn flat @click="reset()">Cancel</v-btn>
             </v-card-actions>
+
+            <v-card-actions v-show="isLoading">
+              <v-spacer></v-spacer>
+              <v-btn flat disabled>Please Wait...</v-btn>
+            </v-card-actions>
           </v-card>
         </v-form>
       </v-flex>
     </v-layout>
+
+    <v-snackbar
+      bottom
+      right
+      :timeout="2000"
+      v-model="snackbar"
+    >
+      {{ snackbarText }}
+    </v-snackbar>
   </v-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import lodash from 'lodash';
 
 @Component({
   metaInfo: {
@@ -80,11 +95,20 @@ import { Component, Vue } from 'vue-property-decorator';
 })
 
 export default class Register extends Vue {
-  private user = {};
+  private snackbarText = '';
+  private isLoading = false;
+  private snackbar = false;
+  private user = {
+    name: '',
+    email: '',
+    username: '',
+    password: '',
+  };
   private dictionary = {
     custom: {
       name: {
         required: 'Name can not be empty',
+        alpha: 'Only contain alphabetic characters',
       },
       email: {
         required: 'E-mail can not be empty',
@@ -105,31 +129,84 @@ export default class Register extends Vue {
     this.$validator.localize('en', this.dictionary);
   }
 
-  private validateForm() {
-    this.$validator.validateAll()
-      .then((result) => {
-        if (!result) {
-          return;
-        }
+  private async validateForm() {
+    const result = await this.$validator.validateAll();
+    const isUsedEmail = await this.checkEmail();
+    const isUsedUsername = await this.checkUsername();
 
-        this.saveData();
+    if (!result) {
+      return;
+    }
+
+    if (!isUsedEmail) {
+      this.snackbarText = 'E-mail has been used';
+      this.snackbar = true;
+      return;
+    }
+
+    if (!isUsedUsername) {
+      this.snackbarText = 'Username has been used';
+      this.snackbar = true;
+      return;
+    }
+
+    this.saveData();
+  }
+
+  private checkEmail() {
+    const { email } = this.user;
+
+    return this.axios.post('auth/checkEmail', { email })
+      .then((res) => {
+        if (!res.data.success) {
+          return false;
+        } else {
+          return true;
+        }
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  private checkUsername() {
+    const { username } = this.user;
+
+    return this.axios.post('auth/checkUsername', { username })
+      .then((res) => {
+        if (!res.data.success) {
+          return false;
+        } else {
+          return true;
+        }
+      })
+      .catch((err) => {
+        throw err;
       })
   }
 
   private saveData() {
+    this.isLoading = true;
+
     const user = this.user;
 
     this.axios.post('auth/register', user)
       .then((res) => {
+        this.isLoading = false;
         this.$router.push('/login');
       })
       .catch((err) => {
+        this.isLoading = false;
         console.log(err);
       });
   }
 
   private reset() {
-    this.user = {};
+    this.user.name = '';
+    this.user.email = '';
+    this.user.username = '';
+    this.user.password = '';
+
     this.$validator.reset();
   }
 }
