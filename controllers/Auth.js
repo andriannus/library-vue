@@ -94,4 +94,62 @@ router.post('/register', (req, res) => {
   });
 });
 
+router.post('/checkEmail', (req, res) => {
+  const { email } = req.body;
+
+  User.findOne({ email })
+    .exec((err, success) => {
+      if (err) {
+        res.status(500).send({
+          status: 500,
+          success: false,
+          message: err,
+        });
+      }
+
+      if (!success) {
+        res.status(200).send({
+          status: 200,
+          success: true,
+          message: 'E-mail can be used',
+        });
+      } else {
+        res.status(200).send({
+          status: 500,
+          success: false,
+          message: 'E-mail cannot be used',
+        });
+      }
+    });
+});
+
+router.post('/checkUsername', (req, res) => {
+  const { username } = req.body;
+
+  User.findOne({ username })
+    .exec((err, success) => {
+      if (err) {
+        res.status(500).send({
+          status: 500,
+          success: false,
+          message: err,
+        });
+      }
+
+      if (!success) {
+        res.status(200).send({
+          status: 200,
+          success: true,
+          message: 'Username can be used',
+        });
+      } else {
+        res.status(200).send({
+          status: 500,
+          success: false,
+          message: 'Username cannot be used',
+        });
+      }
+    });
+});
+
 module.exports = router;
