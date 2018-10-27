@@ -10,7 +10,11 @@
     </v-toolbar>
     <v-data-table
       :headers="headers"
-      :items="items"
+      :loading="loading"
+      :items="items.data"
+      :pagination.sync="pagination"
+      :rows-per-page-items="pagination.rowsPerPageItems"
+      :total-items="pagination.totalItems"
       hide-actions
       class="elevation-1"
     >
@@ -34,6 +38,15 @@
         </td>
       </template>
     </v-data-table>
+    <div class="text-xs-center pt-2">
+      <v-pagination
+        circle
+        :length="pages"
+        prev-icon="mdi-menu-left"
+        next-icon="mdi-menu-right"
+        v-model="pagination.page"
+      ></v-pagination>
+    </div>
 
     <v-dialog
       persistent
@@ -156,7 +169,8 @@
 </style>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue } from 'vue-property-decorator';
+import io from 'socket.io-client';
 import moment from 'moment';
 
 @Component({
@@ -174,12 +188,15 @@ import moment from 'moment';
 })
 
 export default class Book extends Vue {
+  private socket = io.connect('http://localhost:8081');
   private bookId = '';
+  private loading = false;
   private isEdit = false;
   private dialog = false;
   private dialogConfirm = false;
   private book = {};
-  private items = [];
+  private pagination = {} as any;
+  private items = [] as any;
   private headers = [
     {
       text: 'Name',
@@ -232,6 +249,29 @@ export default class Book extends Vue {
     },
   };
 
+  @Watch('pagination.page')
+  private onPaginationChanged() {
+    this.loading = true;
+    this.axios.get(`book?page=${this.pagination.page}`)
+      .then((res) => {
+        this.items = res.data;
+        this.pagination.rowsPerPage = this.items.meta.perPage;
+        this.pagination.totalItems = this.items.meta.total;
+        this.loading = false;
+      })
+      .catch((err) => {
+        // console.log(err);
+      });
+  }
+
+  private get pages() {
+    if (this.pagination.rowsPerPage == null || this.pagination.totalItems == null) {
+      return 0;
+    };
+
+    return Math.ceil(this.pagination.totalItems / this.pagination.rowsPerPage);
+  }
+
   private get modalTitle() {
     return this.isEdit ? 'Edit Book' : 'Add New Book';
   }
@@ -243,6 +283,9 @@ export default class Book extends Vue {
   private mounted() {
     this.fetchData();
     this.$validator.localize('en', this.dictionary);
+    this.socket.on('fetch-book', () => {
+      this.fetchData();
+    });
   }
 
   private viewBook(id: string) {
@@ -252,8 +295,10 @@ export default class Book extends Vue {
   private fetchData() {
     this.axios.get('book')
       .then((res) => {
-        this.items = res.data.data;
-        // console.log(this.items);
+        this.items = res.data;
+        this.pagination.rowsPerPage = this.items.meta.perPage;
+        this.pagination.totalItems = this.items.meta.total;
+        console.log(res.data);
       })
       .catch((err) => {
         // console.log(err);
@@ -277,12 +322,13 @@ export default class Book extends Vue {
     if (!this.isEdit) {
       this.axios.post('book', book)
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           this.reset('noDelete');
-          this.fetchData();
+          // this.fetchData();
+          this.socket.emit('fetch-book');
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
         });
     } else {
       this.axios.post('book/update', book)
