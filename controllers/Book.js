@@ -7,15 +7,16 @@ const Book = require('../models/BookSchema');
 const router = Router();
 
 router.get('/', (req, res) => {
-  const { search } = req.query || '';
-  const fullUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+  const search = req.query.search || '';
+  const fullUrl = `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}`;
   const perPage = 5;
   const page = req.query.page || 1;
 
   Book
-    .find({ name: { $regex: search, $options: 'i' } })
+    .find(search !== '' ? { name: { $regex: search, $options: 'i' } } : {})
     .skip((perPage * page) - perPage)
     .limit(perPage)
+    .sort({ date: -1 })
     .exec((err, books) => {
       if (err) {
         res.status(200).send({
@@ -40,7 +41,7 @@ router.get('/', (req, res) => {
                   first: `${fullUrl}?page=1`,
                   last: total > page ? `${fullUrl}?page=${total}` : `${fullUrl}?page=1`,
                   prev: page - 1 !== 0 ? `${fullUrl}?page=${page - 1}` : null,
-                  next: total > page ? `${fullUrl}?page=${page + 1}` : null,
+                  next: total > page ? `${fullUrl}?page=${parseInt(page, 10) + 1}` : null,
                 },
                 meta: {
                   currentPage: page,

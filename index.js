@@ -1,9 +1,16 @@
-const express = require('express');
 const morgan = require('morgan');
 const { json } = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const express = require('express');
+
+const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+
 const config = require('./config/config');
+
+const PORT = process.env.PORT || config.app.port;
 
 // MongoDB with Mongoose
 mongoose.set('useFindAndModify', false);
@@ -16,12 +23,17 @@ mongoose.connect(config.db.mongoUri, { useNewUrlParser: true }, (err) => {
   }
 });
 
-const PORT = process.env.PORT || config.app.port;
-const app = express();
-
 app.use(morgan('dev'));
 app.use(json());
 app.use(cors());
+
+io.on('connection', (socket) => {
+  console.log('Socket.io: Connected');
+
+  socket.on('fetch-book', () => {
+    io.emit('fetch-book');
+  });
+});
 
 // Load Controller files
 const auth = require('./controllers/Auth');
@@ -32,4 +44,4 @@ app.use('/api/v1/auth', auth);
 // app.use('/api/v1/user', user);
 app.use('/api/v1/book', book);
 
-app.listen(PORT, () => console.log(`App running in port ${PORT}`));
+http.listen(PORT, () => console.log(`App running in port ${PORT}`));
