@@ -22,11 +22,8 @@
         <td>{{ props.item.name }}</td>
         <td>{{ props.item.author }}</td>
         <td>{{ props.item.publisher }}</td>
-        <td>{{ props.item.page }}</td>
-        <td>{{ props.item.isbn }}</td>
-        <td>{{ props.item.date | moment }}</td>
         <td class="text-xs-center">
-          <v-btn icon class="ma-0" @click="viewBook(props.item._id)">
+          <v-btn icon class="ma-0" @click="viewBook(props.item)">
             <v-icon>mdi-eye</v-icon>
           </v-btn>
           <v-btn icon class="ma-0" @click="editBook(props.item)">
@@ -130,6 +127,50 @@
     <v-dialog
       persistent
       transition="slide-y-reverse-transition"
+      v-model="dialogShow"
+      max-width="500px"
+    >
+      <v-card>
+        <v-card-title title>
+          <h3>{{ book.name }}</h3>
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text>
+          <strong>Name of Book</strong>
+          <p>{{ book.name }}</p>
+
+          <strong>Author</strong>
+          <p>{{ book.author }}</p>
+
+          <strong>Publisher</strong>
+          <p>{{ book.publisher }}</p>
+
+          <strong>Total Pages</strong>
+          <p>{{ book.page }}</p>
+
+          <strong>ISBN</strong>
+          <p>{{ book.isbn }}</p>
+
+          <strong>Release</strong>
+          <p>{{ book.date | moment }}</p>
+        </v-card-text>
+
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            flat
+            @click="reset('noDelete')"
+          >Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      persistent
+      transition="slide-y-reverse-transition"
       v-model="dialogConfirm"
       max-width="300px"
     >
@@ -193,6 +234,7 @@ export default class Book extends Vue {
   private loading = false;
   private isEdit = false;
   private dialog = false;
+  private dialogShow = false;
   private dialogConfirm = false;
   private book = {};
   private pagination = {} as any;
@@ -201,31 +243,26 @@ export default class Book extends Vue {
     {
       text: 'Name',
       value: 'name',
+      width: '25%',
+      sortable: false,
     },
     {
       text: 'Author',
       value: 'author',
+      width: '25%',
+      sortable: false,
     },
     {
       text: 'Publisher',
       value: 'publisher',
-    },
-    {
-      text: 'Total Pages',
-      value: 'page',
-    },
-    {
-      text: 'ISBN',
-      value: 'isbn',
-    },
-    {
-      text: 'Release',
-      value: 'date',
+      width: '25%',
+      sortable: false,
     },
     {
       text: 'Actions',
-      sortable: false,
+      width: '25%',
       align: 'center',
+      sortable: false,
     },
   ];
   private dictionary = {
@@ -288,8 +325,9 @@ export default class Book extends Vue {
     });
   }
 
-  private viewBook(id: string) {
-    alert(id);
+  private viewBook(item: any) {
+    this.book = Object.assign({}, item);
+    this.dialogShow = true;
   }
 
   private fetchData() {
@@ -324,7 +362,6 @@ export default class Book extends Vue {
         .then((res) => {
           // console.log(res.data);
           this.reset('noDelete');
-          // this.fetchData();
           this.socket.emit('fetch-book');
         })
         .catch((err) => {
@@ -333,9 +370,9 @@ export default class Book extends Vue {
     } else {
       this.axios.post('book/update', book)
         .then((res) => {
-          console.log(res.data);
+          // console.log(res.data);
           this.reset('noDelete');
-          this.fetchData();
+          this.socket.emit('fetch-book');
         })
         .catch((err) => {
           console.log(err);
@@ -348,7 +385,7 @@ export default class Book extends Vue {
 
     this.axios.post('book/delete', { id })
       .then((res) => {
-        this.fetchData();
+        this.socket.emit('fetch-book');
         this.reset('delete');
       })
       .catch((err) => {
@@ -371,10 +408,11 @@ export default class Book extends Vue {
   private reset(status: string) {
     if (status === 'noDelete') {
       this.dialog = false;
+      this.dialogShow = false;
       this.bookId = '';
-      this.book = {};
 
       setTimeout(() => {
+        this.book = {};
         this.isEdit = false;
         this.$validator.reset();
       }, 500);
