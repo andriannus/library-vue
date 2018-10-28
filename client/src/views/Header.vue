@@ -6,9 +6,9 @@
       <router-view />
     </v-content>
 
-    <v-footer app absolute>
+    <v-footer app absolute py-3>
       <v-layout justify-center row wrap>
-        <v-flex text-xs-center py-3>
+        <v-flex text-xs-center>
           &copy; 2018 - Library App with Vue
         </v-flex>
       </v-layout>
