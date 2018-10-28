@@ -4,6 +4,29 @@
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
 
       <v-toolbar-title>{{ title }}</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+      <v-toolbar-items>
+        <v-menu offset-y>
+          <v-btn
+            flat
+            slot="activator"
+          >
+            <v-icon>mdi-settings</v-icon>
+          </v-btn>
+          
+          <v-list>
+            <v-list-tile to="/logout" @click="logOut()">
+              <v-list-tile-action>
+                <v-icon>mdi-logout-variant</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                Logout
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+      </v-toolbar-items>
     </v-toolbar>
 
     <v-navigation-drawer
@@ -40,15 +63,6 @@
           </v-list-tile-action>
           <v-list-tile-content>
             Books
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-list-tile to="/logout" @click="logOut()">
-          <v-list-tile-action>
-            <v-icon>mdi-logout-variant</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            Logout
           </v-list-tile-content>
         </v-list-tile>
       </v-list>
