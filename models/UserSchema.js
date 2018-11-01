@@ -8,6 +8,11 @@ const userSchema = new Schema({
   username: String,
   password: String,
   email: String,
+  level: {
+    type: String,
+    enum: ['admin', 'user'],
+    default: 'user',
+  },
   avatar: {
     type: String,
     default: 'avatar.jpg',

@@ -42,7 +42,7 @@ router.post('/login', (req, res) => {
             });
           } else {
             jwt.sign(
-              { email, password },
+              { user },
               config.jwt.secretKey,
               { expiresIn: config.jwt.expiresIn },
               (fail, token) => {
