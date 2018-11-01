@@ -48,7 +48,7 @@
       <v-divider></v-divider>
 
       <v-list dense>
-        <v-list-tile to="/" @click="setTitle">
+        <v-list-tile to="/admin" @click="setTitle">
           <v-list-tile-action>
             <v-icon>mdi-view-dashboard</v-icon>
           </v-list-tile-action>
@@ -57,7 +57,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/books" @click="setTitle">
+        <v-list-tile to="/admin/books" @click="setTitle">
           <v-list-tile-action>
             <v-icon>mdi-book</v-icon>
           </v-list-tile-action>

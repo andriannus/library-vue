@@ -72,7 +72,7 @@ export default new Vuex.Store({
               axios.defaults.headers.common['t-t'] = token;
 
               commit('AUTH_SUCCESS', token);
-              commit('USER_DATA', user);
+              commit('USER_DATA', res.data.user);
               resolve(res);
             }
           })
@@ -97,7 +97,8 @@ export default new Vuex.Store({
   },
 
   getters: {
-    isAuthenticated: (state) => !!state.token, // return boolean
+    isAdmin: (state) => !!state.token && state.user.level === 'admin',
+    isUser: (state) => !!state.token && state.user.level === 'user',
     authStatus: (state) => state.status,
   },
 });

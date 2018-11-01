@@ -4,8 +4,10 @@ import store from './store';
 
 import Register from './views/Register.vue';
 import Login from './views/Login.vue';
-import Header from './views/Header.vue';
-import Home from './views/Home.vue';
+import LayoutAdmin from './views/LayoutAdmin.vue';
+import LayoutUser from './views/LayoutUser.vue';
+import HomeAdmin from './views/HomeAdmin.vue';
+import HomeUser from './views/HomeUser.vue';
 import Book from './views/Book.vue';
 
 Vue.use(Router);
@@ -19,8 +21,17 @@ const ifNotAuthenticated = (to: any, from: any, next: any) => {
   next('/');
 };
 
-const ifAuhenticated = (to: any, from: any, next: any) => {
-  if (store.getters.isAuthenticated) {
+const ifAdmin = (to: any, from: any, next: any) => {
+  if (store.getters.isAdmin) {
+    next();
+    return;
+  }
+
+  next('/login');
+};
+
+const ifUser = (to: any, from: any, next: any) => {
+  if (store.getters.ifUser) {
     next();
     return;
   }
@@ -51,31 +62,38 @@ export default new Router({
       },
     },
     {
-      path: '/',
-      component: Header,
+      path: '/admin',
+      component: LayoutAdmin,
+      beforeEnter: ifAdmin,
       children: [
         {
           path: '',
           name: 'home',
-          component: Home,
-          beforeEnter: ifAuhenticated,
+          component: HomeAdmin,
           meta: {
             title: 'Dashboard',
+          },
+        },
+        {
+          path: 'books',
+          name: 'list-books',
+          component: Book,
+          meta: {
+            title: 'List of Books',
           },
         },
       ],
     },
     {
-      path: '/books',
-      component: Header,
+      path: '/',
+      component: LayoutUser,
       children: [
         {
           path: '',
-          name: 'list-books',
-          component: Book,
-          beforeEnter: ifAuhenticated,
+          name: 'home-user',
+          component: HomeUser,
           meta: {
-            title: 'List of Books',
+            title: 'Welcome to Library App',
           },
         },
       ],
