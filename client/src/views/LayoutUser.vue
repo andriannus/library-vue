@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navigation />
+    <NavUser />
 
     <v-content>
       <router-view />
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import Navigation from '@/components/Navigation.vue';
+import NavUser from '@/components/NavUser.vue';
 
 @Component({
   metaInfo: {
@@ -26,7 +26,7 @@ import Navigation from '@/components/Navigation.vue';
   },
 
   components: {
-    Navigation,
+    NavUser,
   },
 })
 
