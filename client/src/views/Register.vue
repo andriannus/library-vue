@@ -182,7 +182,7 @@ export default class Register extends Vue {
       })
       .catch((err) => {
         throw err;
-      })
+      });
   }
 
   private saveData() {
