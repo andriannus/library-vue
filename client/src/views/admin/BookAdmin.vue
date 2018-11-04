@@ -228,7 +228,7 @@ import moment from 'moment';
   },
 })
 
-export default class Book extends Vue {
+export default class BookAdmin extends Vue {
   private socket = io.connect('http://localhost:8081');
   private bookId = '';
   private loading = false;

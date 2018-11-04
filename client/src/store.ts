@@ -97,6 +97,7 @@ export default new Vuex.Store({
   },
 
   getters: {
+    isAuthenticated: (state) => !!state.token,
     isAdmin: (state) => !!state.token && state.user.level === 'admin',
     isUser: (state) => !!state.token && state.user.level === 'user',
     authStatus: (state) => state.status,

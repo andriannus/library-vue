@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navigation />
+    <NavAdmin />
 
     <v-content>
       <router-view />
@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import Navigation from '@/components/Navigation.vue';
+import NavAdmin from '@/components/admin/NavAdmin.vue';
 
 @Component({
   metaInfo: {
@@ -26,9 +26,9 @@ import Navigation from '@/components/Navigation.vue';
   },
 
   components: {
-    Navigation,
+    NavAdmin,
   },
 })
 
-export default class Header extends Vue {}
+export default class LayoutAdmin extends Vue {}
 </script>

@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import NavUser from '@/components/NavUser.vue';
+import NavUser from '@/components/user/NavUser.vue';
 
 @Component({
   metaInfo: {
@@ -30,5 +30,5 @@ import NavUser from '@/components/NavUser.vue';
   },
 })
 
-export default class Header extends Vue {}
+export default class LayoutUser extends Vue {}
 </script>
