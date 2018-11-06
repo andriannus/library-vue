@@ -318,10 +318,10 @@ export default class BookAdmin extends Vue {
   }
 
   private mounted() {
-    this.fetchData();
+    this.fetchBooks();
     this.$validator.localize('en', this.dictionary);
     this.socket.on('fetch-book', () => {
-      this.fetchData();
+      this.fetchBooks();
     });
   }
 
@@ -330,7 +330,7 @@ export default class BookAdmin extends Vue {
     this.dialogShow = true;
   }
 
-  private fetchData() {
+  private fetchBooks() {
     this.axios.get('book')
       .then((res) => {
         this.items = res.data;
