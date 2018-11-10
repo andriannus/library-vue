@@ -23,15 +23,34 @@
         <td>{{ props.item.author }}</td>
         <td>{{ props.item.publisher }}</td>
         <td class="text-xs-center">
-          <v-btn icon class="ma-0" @click="viewBook(props.item)">
-            <v-icon>mdi-eye</v-icon>
-          </v-btn>
-          <v-btn icon class="ma-0" @click="editBook(props.item)">
-            <v-icon>mdi-circle-edit-outline</v-icon>
-          </v-btn>
-          <v-btn icon class="ma-0" @click="deleteConfirm(props.item._id)">
-            <v-icon color="error">mdi-delete-circle</v-icon>
-          </v-btn>
+          <v-layout justify-center>
+            <v-btn
+              icon
+              outline
+              color="green darken-3"
+              @click="viewBook(props.item)"
+            >
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
+
+            <v-btn
+              icon
+              outline
+              color="primary"
+              @click="editBook(props.item)"
+            >
+              <v-icon>mdi-circle-edit-outline</v-icon>
+            </v-btn>
+
+            <v-btn
+              icon
+              outline
+              color="error"
+              @click="deleteConfirm(props.item._id)"
+            >
+              <v-icon>mdi-delete-circle</v-icon>
+            </v-btn>
+          </v-layout>
         </td>
       </template>
     </v-data-table>
