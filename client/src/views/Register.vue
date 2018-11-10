@@ -197,7 +197,7 @@ export default class Register extends Vue {
       })
       .catch((err) => {
         this.isLoading = false;
-        console.log(err);
+        // console.log(err);
       });
   }
 

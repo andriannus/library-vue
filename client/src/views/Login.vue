@@ -117,7 +117,7 @@ export default class Login extends Vue {
     this.$store.dispatch('AUTH_REQUEST', user)
       .then(() => {
         this.isLoading = false;
-        
+
         if (this.$store.getters.isAdmin) {
           this.$router.push('/admin');
         } else {

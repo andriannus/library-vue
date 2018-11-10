@@ -336,7 +336,7 @@ export default class BookAdmin extends Vue {
         this.items = res.data;
         this.pagination.rowsPerPage = this.items.meta.perPage;
         this.pagination.totalItems = this.items.meta.total;
-        console.log(res.data);
+        // console.log(res.data);
       })
       .catch((err) => {
         // console.log(err);
@@ -375,7 +375,7 @@ export default class BookAdmin extends Vue {
           this.socket.emit('fetch-book');
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
         });
     }
   }
@@ -389,7 +389,7 @@ export default class BookAdmin extends Vue {
         this.reset('delete');
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
   }
 

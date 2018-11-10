@@ -65,7 +65,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 @Component
-export default class Navigation extends Vue{
+export default class Navigation extends Vue {
   private logOut() {
     // Vuex Action
     this.$store.dispatch('AUTH_LOGOUT')

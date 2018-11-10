@@ -53,7 +53,7 @@ import moment from 'moment';
   },
 })
 
-export default class BookUser extends Vue{
+export default class BookUser extends Vue {
   private books = {} as any;
   private nextPage = '';
   private isLoading = false;
@@ -78,8 +78,8 @@ export default class BookUser extends Vue{
         }
       })
       .catch((err) => {
-        console.log(err);
-      })
+        // console.log(err);
+      });
   }
-};
+}
 </script>
