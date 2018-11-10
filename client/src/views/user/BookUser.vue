@@ -29,18 +29,19 @@
 
     <v-layout justify-center>
       <v-btn
-        :flat="isLoading"
-        :loading="isLoading"
         color="green darken-3 white--text"
         @click="fetchBooks(nextPage)"
         v-if="nextPage"
       >Load More</v-btn>
     </v-layout>
+
+    <Loading v-if="isLoading" />
   </v-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import Loading from '@/components/Loading.vue';
 import moment from 'moment';
 
 @Component({
@@ -51,6 +52,10 @@ import moment from 'moment';
   filters: {
     moment: (date: any) => moment(date).format('LL'),
   },
+
+  components: {
+    Loading,
+  }
 })
 
 export default class BookUser extends Vue {
