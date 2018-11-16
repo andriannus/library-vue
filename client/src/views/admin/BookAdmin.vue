@@ -24,32 +24,44 @@
         <td>{{ props.item.publisher }}</td>
         <td class="text-xs-center">
           <v-layout justify-center>
-            <v-btn
-              icon
-              outline
-              color="green darken-3"
-              @click="viewBook(props.item)"
-            >
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                color="green darken-3"
+                slot="activator"
+                @click="viewBook(props.item)"
+              >
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+              <span>View</span>
+            </v-tooltip>
 
-            <v-btn
-              icon
-              outline
-              color="primary"
-              @click="editBook(props.item)"
-            >
-              <v-icon>mdi-circle-edit-outline</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                color="primary"
+                slot="activator"
+                @click="editBook(props.item)"
+              >
+                <v-icon>mdi-circle-edit-outline</v-icon>
+              </v-btn>
+              <span>Edit</span>
+            </v-tooltip>
 
-            <v-btn
-              icon
-              outline
-              color="error"
-              @click="deleteConfirm(props.item._id)"
-            >
-              <v-icon>mdi-delete-circle</v-icon>
-            </v-btn>
+            <v-tooltip bottom>
+              <v-btn
+                icon
+                outline
+                color="error"
+                slot="activator"
+                @click="deleteConfirm(props.item._id)"
+              >
+                <v-icon>mdi-delete-circle</v-icon>
+              </v-btn>
+              <span>Delete</span>
+            </v-tooltip>
           </v-layout>
         </td>
       </template>

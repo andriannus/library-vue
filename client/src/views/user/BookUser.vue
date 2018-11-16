@@ -55,7 +55,7 @@ import moment from 'moment';
 
   components: {
     Loading,
-  }
+  },
 })
 
 export default class BookUser extends Vue {
