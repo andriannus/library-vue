@@ -10,6 +10,7 @@ import HomeAdmin from './views/admin/HomeAdmin.vue';
 import HomeUser from './views/user/HomeUser.vue';
 import BookAdmin from './views/admin/BookAdmin.vue';
 import BookUser from './views/user/BookUser.vue';
+import ProfileUser from './views/user/ProfileUser.vue';
 
 Vue.use(Router);
 
@@ -113,6 +114,14 @@ export default new Router({
           component: BookUser,
           meta: {
             title: 'List of Books',
+          },
+        },
+        {
+          path: 'profile',
+          name: 'profile-user',
+          component: ProfileUser,
+          meta: {
+            title: 'Profile User',
           },
         },
       ],

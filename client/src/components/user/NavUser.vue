@@ -37,7 +37,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile to="/logout">
+            <v-list-tile to="/profile">
               <v-list-tile-action>
                 <v-icon>mdi-account</v-icon>
               </v-list-tile-action>
