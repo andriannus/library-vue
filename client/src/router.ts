@@ -86,7 +86,7 @@ export default new Router({
           },
         },
         {
-          path: 'books',
+          path: 'book',
           name: 'list-books',
           component: BookAdmin,
           meta: {

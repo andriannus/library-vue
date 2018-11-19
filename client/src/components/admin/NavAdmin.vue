@@ -57,7 +57,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile to="/admin/books" @click="setTitle">
+        <v-list-tile to="/admin/book" @click="setTitle">
           <v-list-tile-action>
             <v-icon>mdi-book</v-icon>
           </v-list-tile-action>
