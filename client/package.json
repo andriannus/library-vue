@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@mdi/font": "^2.8.94",
-    "@types/lodash": "^4.14.117",
     "axios": "^0.18.0",
     "epic-spinners": "^1.0.3",
+    "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "socket.io-client": "^2.1.1",
     "vee-validate": "^2.1.0-beta.11",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.1.4",
+    "@types/lodash": "^4.14.118",
     "@types/socket.io-client": "^1.4.32",
     "@vue/cli-plugin-babel": "^3.0.3",
     "@vue/cli-plugin-typescript": "^3.0.3",
