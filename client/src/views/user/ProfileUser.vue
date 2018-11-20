@@ -29,52 +29,61 @@
               </v-tooltip>
             </div>
 
-            <v-hover v-if="!isEditName">
-              <v-card
-                slot-scope="{ hover }"
-                :class="`elevation-${hover ? 2 : 0} mb-4`"
-                @dblclick="isEditName = true"
-              >
-                <v-card-text class="card-hover pa-2">
-                  <strong>Name</strong>
-                  <p class="mb-0">{{ user.name }}</p>
-                </v-card-text>
-              </v-card>
-            </v-hover>
+            <v-card
+              flat
+              class="card-hover mb-4"
+              @dblclick="edit('name')"
+              v-if="!isEditName"
+            >
+              <v-card-text class="pa-2">
+                <strong>Name</strong>
+                <p class="mb-0">{{ user.name }}</p>
+              </v-card-text>
+            </v-card>
 
             <v-text-field
               box
               name="name"
               label="Name"
-              v-model="user.name"
-              append-icon="mdi-close"
+              v-model="name"
+              :append-icon="`${isLoadingName ? 'mdi-timer-sand' : 'mdi-close'}`"
               @click:append="isEditName = !isEditName"
+              @input="isTyping('updateName')"
+              :disabled="isLoadingName"
               v-if="isEditName"
             ></v-text-field>
 
-            <v-hover v-if="!isEditUsername">
-              <v-card
-                slot-scope="{ hover }"
-                :class="`elevation-${hover ? 2 : 0}`"
-                @dblclick="isEditUsername = true"
-              >
-                <v-card-text class="card-hover pa-2">
-                  <strong>Username</strong>
-                  <p class="mb-0">{{ user.username }}</p>
-                </v-card-text>
-              </v-card>
-            </v-hover>
+            <v-card
+              flat
+              class="card-hover mb-4"
+              @dblclick="edit('username')"
+              v-if="!isEditUsername"
+            >
+              <v-card-text class="pa-2">
+                <strong>Username</strong>
+                <p class="mb-0">{{ user.username }}</p>
+              </v-card-text>
+            </v-card>
 
             <v-text-field
               box
               name="username"
               label="Username"
-              v-model="user.username"
-              append-icon="mdi-close"
+              v-model="username"
+              :append-icon="`${isLoadingUsername ? 'mdi-timer-sand' : 'mdi-close'}`"
               @click:append="isEditUsername = !isEditUsername"
+              @input="isTyping('updateUsername')"
+              :disabled="isLoadingUsername"
               v-if="isEditUsername"
             ></v-text-field>
           </v-card-text>
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <span>
+              <em>Double click to edit</em>
+            </span>
+          </v-card-actions>
         </v-card>
       </v-flex>
     </v-layout>
@@ -88,7 +97,12 @@
 }
 
 .card-hover {
+  border: 1px solid #fff;
   cursor: pointer;
+}
+
+.card-hover:hover {
+  border: 1px solid #999;
 }
 </style>
 
@@ -103,17 +117,66 @@ import _ from 'lodash';
 })
 
 export default class ProfileUser extends Vue {
+  private debounce: any;
+  private name = '';
+  private username = '';
+  private user = {} as any;
   private isEditName = false;
   private isEditUsername = false;
-  private user = {} as any;
+  private isLoadingName = false;
+  private isLoadingUsername = false;
 
   private mounted() {
     this.user = this.$store.state.user;
+
+    this.debounce = _.debounce((method: string) => {
+      if (method === 'updateName') {
+        this.updateName();
+      }
+
+      if (method === 'updateUsername') {
+        this.updateUsername();
+      }
+    }, 2000);
   }
 
   private get firstCharacter() {
     const name = String(this.user.name);
     return name.charAt(0).toUpperCase();
+  }
+
+  private edit(type: string) {
+    if (type === 'name') {
+      this.name = this.user.name;
+      this.isEditName = true;
+    }
+
+    if (type === 'username') {
+      this.username = this.user.username;
+      this.isEditUsername = true;
+    }
+  }
+
+  private isTyping(method: string) {
+    this.debounce(method);
+  }
+
+  private updateName() {
+    this.isLoadingName = true;
+
+    setTimeout(() => {
+      alert('OK Name');
+      this.isLoadingName = false;
+    }, 2000);
+  }
+
+  private updateUsername() {
+    this.isLoadingUsername = true;
+
+    setTimeout(() => {
+      alert('OK Username');
+      this.isLoadingUsername = false;
+    }, 2000);
   }
 }
 </script>
