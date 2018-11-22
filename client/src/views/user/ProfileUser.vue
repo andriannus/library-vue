@@ -79,8 +79,8 @@
           </v-card-text>
           <v-divider></v-divider>
 
-          <v-card-actions>
-            <span>
+          <v-card-actions class="justify-center">
+            <span class="grey--text">
               <em>Double click to edit</em>
             </span>
           </v-card-actions>
@@ -161,13 +161,28 @@ export default class ProfileUser extends Vue {
     this.debounce(method);
   }
 
-  private updateName() {
+  private async updateName() {
     this.isLoadingName = true;
 
-    setTimeout(() => {
-      alert('OK Name');
-      this.isLoadingName = false;
-    }, 2000);
+    const data = {
+      _id: this.user._id,
+      name: this.name,
+    };
+
+    const result = await this.axios.post('user/updateName', data);
+
+    if (result) {
+      this.$store.dispatch('AUTH_REFRESH', { _id: data._id })
+        .then((res) => {
+          this.user = this.$store.state.user;
+          
+          this.isEditName = false;
+          this.isLoadingName = false;
+        })
+        .catch((err) => {
+          // 
+        });
+    }
   }
 
   private updateUsername() {

@@ -37,11 +37,11 @@ io.on('connection', (socket) => {
 
 // Load Controller files
 const auth = require('./controllers/Auth');
-// const user = require('./controllers/User');
+const user = require('./controllers/User');
 const book = require('./controllers/Book');
 
 app.use('/api/v1/auth', auth);
-// app.use('/api/v1/user', user);
+app.use('/api/v1/user', user);
 app.use('/api/v1/book', book);
 
 http.listen(PORT, () => console.log(`App running in port ${PORT}`));
