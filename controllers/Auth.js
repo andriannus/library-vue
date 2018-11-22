@@ -152,4 +152,48 @@ router.post('/checkUsername', (req, res) => {
     });
 });
 
+router.post('/refreshToken', (req, res) => {
+  const { _id } = req.body;
+
+  User.findById(_id)
+    .exec((err, user) => {
+      if (err) {
+        res.status(200).send({
+          status: 500,
+          success: false,
+          message: err,
+        });
+      } else if (!user) {
+        res.status(200).send({
+          status: 404,
+          success: false,
+          message: 'User not found',
+        });
+      } else {
+        jwt.sign(
+          { user },
+          config.jwt.secretKey,
+          { expiresIn: config.jwt.expiresIn },
+          (fail, token) => {
+            if (fail) {
+              res.status(200).send({
+                status: 500,
+                success: false,
+                message: fail,
+              });
+            }
+
+            res.status(200).header('t-t', token).send({
+              status: 200,
+              success: true,
+              message: 'Login successful',
+              user,
+              token,
+            });
+          },
+        );
+      }
+    });
+});
+
 module.exports = router;
