@@ -87,6 +87,15 @@
         </v-card>
       </v-flex>
     </v-layout>
+
+    <v-snackbar
+      top
+      right
+      :timeout="2000"
+      v-model="snackbar"
+    >
+      {{ snackbarText }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -103,6 +112,8 @@
 
 .card-hover:hover {
   border: 1px solid #999;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 </style>
 
@@ -120,7 +131,9 @@ export default class ProfileUser extends Vue {
   private debounce: any;
   private name = '';
   private username = '';
+  private snackbarText = '';
   private user = {} as any;
+  private snackbar = false;
   private isEditName = false;
   private isEditUsername = false;
   private isLoadingName = false;
@@ -137,7 +150,7 @@ export default class ProfileUser extends Vue {
       if (method === 'updateUsername') {
         this.updateUsername();
       }
-    }, 2000);
+    }, 1000);
   }
 
   private get firstCharacter() {
@@ -175,12 +188,14 @@ export default class ProfileUser extends Vue {
       this.$store.dispatch('AUTH_REFRESH', { _id: data._id })
         .then((res) => {
           this.user = this.$store.state.user;
-          
+
+          this.snackbarText = 'Name updated successfully';
+          this.snackbar = true;
           this.isEditName = false;
           this.isLoadingName = false;
         })
         .catch((err) => {
-          // 
+          //
         });
     }
   }
