@@ -29,4 +29,25 @@ router.post('/updateName', isAuthenticated, (req, res) => {
   });
 });
 
+router.post('/updateUsername', isAuthenticated, (req, res) => {
+  const { _id, username } = req.body;
+
+  User.findByIdAndUpdate(_id, { username }, { new: true }, (err, updatedUsername) => {
+    if (err) {
+      res.status(200).send({
+        status: 500,
+        success: false,
+        message: err,
+      });
+    }
+
+    res.status(200).send({
+      status: 200,
+      success: true,
+      message: 'Username has been updated',
+      user: updatedUsername,
+    });
+  });
+});
+
 module.exports = router;

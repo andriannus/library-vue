@@ -81,7 +81,7 @@
 
           <v-card-actions class="justify-center">
             <span class="grey--text">
-              <em>Double click to edit</em>
+              <em>- Double click to edit -</em>
             </span>
           </v-card-actions>
         </v-card>
@@ -200,13 +200,39 @@ export default class ProfileUser extends Vue {
     }
   }
 
-  private updateUsername() {
+  private async updateUsername() {
     this.isLoadingUsername = true;
 
-    setTimeout(() => {
-      alert('OK Username');
+    const data = {
+      _id: this.user._id,
+      username: this.username,
+    };
+
+    const isAvailable = await this.axios.post('auth/checkUsername', { username: this.username });
+
+    if (!isAvailable.data.success) {
+      this.snackbarText = 'Username cannot be used';
+      this.snackbar = true;
       this.isLoadingUsername = false;
-    }, 2000);
+      return false;
+    }
+
+    const result = await this.axios.post('user/updateUsername', data);
+
+    if (result) {
+      this.$store.dispatch('AUTH_REFRESH', { _id: data._id })
+        .then((res) => {
+          this.user = this.$store.state.user;
+
+          this.snackbarText = 'Username updated successfully';
+          this.snackbar = true;
+          this.isEditUsername = false;
+          this.isLoadingUsername = false;
+        })
+        .catch((err) => {
+          //
+        });
+    }
   }
 }
 </script>
