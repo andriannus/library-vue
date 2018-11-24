@@ -89,6 +89,35 @@ router.get('/:id', (req, res) => {
     });
 });
 
+router.post('/checkIsbn', (req, res) => {
+  const { isbn } = req.body;
+
+  Book.findOne({ isbn })
+    .exec((err, book) => {
+      if (err) {
+        res.status(200).send({
+          status: 500,
+          success: false,
+          message: err,
+        });
+      }
+
+      if (book == null) {
+        res.status(200).send({
+          status: 200,
+          success: true,
+          message: 'ISBN can be used',
+        });
+      } else {
+        res.status(200).send({
+          status: 200,
+          success: false,
+          message: 'ISBN cannot be used',
+        });
+      }
+    });
+});
+
 router.post('/', isAuthenticated, (req, res) => {
   const newBook = new Book();
 

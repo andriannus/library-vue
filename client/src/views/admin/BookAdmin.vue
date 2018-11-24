@@ -230,6 +230,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-snackbar
+      top
+      right
+      :color="color"
+      :timeout="2000"
+      v-model="snackbar"
+    >
+      {{ snackbarText }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -262,12 +272,15 @@ import moment from 'moment';
 export default class BookAdmin extends Vue {
   private socket = io.connect('http://localhost:8081');
   private bookId = '';
+  private color = '';
+  private snackbarText = '';
+  private snackbar = false;
   private loading = false;
   private isEdit = false;
   private dialog = false;
   private dialogShow = false;
   private dialogConfirm = false;
-  private book = {};
+  private book = {} as any;
   private pagination = {} as any;
   private items = [] as any;
   private headers = [
@@ -385,8 +398,18 @@ export default class BookAdmin extends Vue {
       });
   }
 
-  private saveProcess() {
+  private async saveProcess() {
     const book = this.book;
+
+    const isIsbnAvailable = await this.axios.post('book/checkIsbn', { isbn: book.isbn });
+
+    if (!isIsbnAvailable.data.success) {
+      this.color = 'error';
+      this.snackbarText = 'ISBN cannot be used';
+      this.snackbar = true;
+
+      return false;
+    }
 
     if (!this.isEdit) {
       this.axios.post('book', book)
