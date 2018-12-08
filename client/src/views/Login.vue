@@ -23,10 +23,12 @@
                 <v-flex xs12>
                   <v-text-field
                     label="Password"
-                    type="password"
-                    v-model.number="user.password"
+                    :type="pass ? 'password' : 'text'"
+                    v-model="user.password"
                     v-validate="'required'"
                     data-vv-name="password"
+                    :append-icon="pass ? 'visibility' : 'visibility_off'"
+                    @click:append="changeVisibility"
                     :error-messages="errors.collect('password')"
                   ></v-text-field>
                 </v-flex>
@@ -77,6 +79,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 export default class Login extends Vue {
   private snackbarText = '';
+  private pass = true;
   private isLoading = false;
   private snackbar = false;
   private user = {
@@ -97,6 +100,10 @@ export default class Login extends Vue {
 
   private mounted() {
     this.$validator.localize('en', this.dictionary);
+  }
+
+  private changeVisibility() {
+    this.pass = !this.pass;
   }
 
   private validateForm() {
