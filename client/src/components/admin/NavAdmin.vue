@@ -78,12 +78,11 @@ export default class Navigation extends Vue {
   public drawer = false;
   public title = '';
 
-  public mounted() {
+  private mounted() {
     this.setTitle();
-    this.$root.$watch('setTitle', this.setTitle);
   }
 
-  public setTitle() {
+  private setTitle() {
     this.title = this.$route.meta.title;
   }
 

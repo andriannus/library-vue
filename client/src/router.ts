@@ -105,7 +105,7 @@ export default new Router({
           name: 'home-user',
           component: HomeUser,
           meta: {
-            title: 'Welcome to Library App',
+            title: 'Home',
           },
         },
         {
